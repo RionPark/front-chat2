@@ -11,7 +11,6 @@ export const UserList = () => {
   const [users, setUsers] = useState<any[]>([]);
   const loginUser = useChatSelector((state: any) => state.user);
   useEffect(() => {
-    console.log('!!=>',tmpUsers.list)
     setUsers(tmpUsers.list);
   }, [tmpUsers]);
 

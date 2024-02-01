@@ -1,13 +1,15 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import userReducer from "./userSlice";
 import userListReducer from "./userListSlice";
+import enterUserReducer from "./enterUserSlice";
 import storage from "redux-persist/lib/storage";
 import { persistReducer } from "redux-persist";
 import { useDispatch, useSelector } from "react-redux";
 
 const reducers = combineReducers({
     user: userReducer,
-    userList : userListReducer
+    userList : userListReducer,
+    enterUser : enterUserReducer
 });
 
 const persistConfig = {

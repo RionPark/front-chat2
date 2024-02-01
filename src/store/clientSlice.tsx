@@ -13,13 +13,9 @@ const clientSlice = createSlice({
             state.client = new Client({
                 brokerURL: brokerURL,
                 debug: (str) => {
-                    console.log(str);
                 },
                 connectHeaders: {
                     uiNum : localStorage.getItem('uiNum')||''
-                },
-                onConnect: (frame) => {
-                    console.log(frame);
                 }
             });
         },
