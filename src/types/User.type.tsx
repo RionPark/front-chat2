@@ -1,0 +1,22 @@
+export interface User{
+    uiNum?:number;
+	uiId?:string;
+	uiPwd?:string;
+	uiName?:string;
+	uiEmail?:string;
+	uiPhone?:string;
+	uiBirth?:string;
+	uiGender?:string;
+	uiGrade?:string;
+	uiCredat?:string;
+	uiCretim?:string;
+	uiLmodat?:string;
+	uiLmotim?:string;
+	uiImgPath?:string;
+	sessionId?:string;
+	loginDate?:string;
+	riNum?:number;
+	token?:string;
+	login?:boolean;
+	authorities?:any[];
+}
