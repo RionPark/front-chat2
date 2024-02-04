@@ -1,4 +1,5 @@
 import { Client } from "@stomp/stompjs";
+import { Msg } from "../types/Msg.type";
 
 const brokerURL = `${process.env.REACT_APP_WS}://${process.env.REACT_APP_HOST}/react-chat`;
 
@@ -30,4 +31,11 @@ export const disconnectClient = ()=>{
     if(client.connected){
         client.deactivate();
     }
+}
+
+export const publishMsg = (destination:string, msg:Msg)=>{
+    client.publish({
+        destination:destination,
+        body:JSON.stringify(msg)
+    })
 }

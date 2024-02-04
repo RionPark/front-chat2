@@ -1,15 +1,12 @@
 import { Avatar, Conversation, ConversationList, Search, Sidebar } from "@chatscope/chat-ui-kit-react";
-import { axiosAuth, axiosHttp } from "../api/axiosHttp";
 import { useEffect, useState } from "react";
-import { User } from "../types/User.type";
 import { useChatDispatch, useChatSelector } from "../store";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { setSelectedUser } from "../store/selectedUserSlice";
 
 export const UserList = () => {
+  const dispatch = useChatDispatch();
   const tmpUsers = useChatSelector((state:any)=>state.userList);
   const [users, setUsers] = useState<any[]>([]);
-  const loginUser = useChatSelector((state: any) => state.user);
   useEffect(() => {
     setUsers(tmpUsers.list);
   }, [tmpUsers]);
@@ -18,13 +15,16 @@ export const UserList = () => {
     <Sidebar position="left" scrollable={false}>
       <Search placeholder="Search..." />
       <ConversationList>
-        {users?users.map((chatUser: User, idx) => (
+        {users?users.map((chatUser: any, idx) => (
           <Conversation
             key={idx}
             name={chatUser.uiName}
             lastSenderName={chatUser.uiName}
             info="Yes i can do it for you"
             style={{ justifyContent: "start" }}
+            onClick={()=>{
+              dispatch(setSelectedUser(chatUser));
+            }}
           >
             <Avatar
               src={require("./images/ram.png")}

@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import logo from './logo.svg';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import './App.css';
 import { Main } from './components/Main';
@@ -12,9 +11,11 @@ import { setUserList } from './store/userListSlice';
 import { disconnectClient, initClient } from './service/ChatService';
 import { Toast } from './components/Toast';
 import { setEnterUser } from './store/enterUserSlice';
+import { persistor } from '.';
 
 
 function App() {
+  
   const loginUser = useChatSelector((state: any) => state.user);
   const uiNum = localStorage.getItem('uiNum');
   const tmpObj = useChatSelector((state: any) => state.userList);
@@ -28,11 +29,13 @@ function App() {
           if(!user.login){
             for(const tmpUser of tmpUsers){
               if(tmpUser.login && tmpUser.uiNum === user.uiNum){
+                console.log(tmpUser);
                 return user;
               }
             }
           }
         });
+
         for(const loginUser of loginUsers){
           dispatch(setEnterUser(loginUser));
         }
@@ -49,6 +52,7 @@ function App() {
   useEffect(() => {
     disconnectClient();
     if (!uiNum) {
+      persistor.purge();
       return;
     }
     initClient(configs)
@@ -64,9 +68,10 @@ function App() {
       <div className="App">
         <nav className="navbar navbar-expand-lg navbar-light fixed-top">
           <div className="container">
-            <Link className="navbar-brand" to={'/sign-in'}>
+            <Link className="navbar-brand" to={loginUser.uiNum===0?'/sign-in':'/main'}>
               Chatting
             </Link>
+            
             <Menu />
           </div>
         </nav>

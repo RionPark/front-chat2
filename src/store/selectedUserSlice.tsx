@@ -24,11 +24,11 @@ const initialState:User={
 	login:false,
     authorities:[],
 };
-const userSlice =createSlice({
-    name:'user',
+const selectedUserSlice =createSlice({
+    name:'selectedUser',
     initialState: initialState,
     reducers:{
-        setUser:(state:User, action:any)=>{
+        setSelectedUser:(state:User, action:any)=>{
             state.uiNum = action.payload.uiNum;
             state.uiId = action.payload.uiId;
             state.uiName =  action.payload.uiName;
@@ -56,5 +56,5 @@ const userSlice =createSlice({
         builder.addCase(PURGE, () => initialState);
     }
 });
-export const {setUser}=userSlice.actions;
-export default userSlice.reducer;
+export const {setSelectedUser}=selectedUserSlice.actions;
+export default selectedUserSlice.reducer;
