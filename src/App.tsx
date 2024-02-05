@@ -14,6 +14,7 @@ import { setEnterUser } from './store/enterUserSlice';
 import { persistor } from '.';
 import { Msg } from './types/Msg.type';
 import { globalRouter } from './api/globalRouter';
+import { setChatList } from './store/chatListSlice';
 
 
 function App() {
@@ -62,7 +63,11 @@ function App() {
           }
         }
         dispatch(setUserList(tmpList));
-        console.log(msg);
+        if(msg.cmiSenderUiNum !== selectedUser.uiNum){
+          const chatList:any = JSON.parse(localStorage.getItem('chatList') || '{}');
+          chatList.list.push(msg);
+          dispatch(setChatList(chatList));
+        }
       }
     }]
   useEffect(() => {

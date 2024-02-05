@@ -12,6 +12,7 @@ const chatListSlice =createSlice({
         setChatList:(state:any, action:any)=>{
             state.uiNum = action.payload.uiNum;
             state.list = action.payload.list;
+            localStorage.setItem('chatList', JSON.stringify(action.payload));
         },
         initChatList:(state:any)=>{
             state = initialState;
