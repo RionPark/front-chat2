@@ -53,7 +53,7 @@ function App() {
         const msg: Msg = JSON.parse(data.body);
         const tmpList: any = JSON.parse(localStorage.getItem('userList') || '[]');
         const selectedUser: any = JSON.parse(localStorage.getItem('selectedUser') || '{}');
-        const uiNum = parseInt(localStorage.getItem('uiNum')||'0');
+        const uiNum = parseInt(localStorage.getItem('uiNum') || '0');
         if (msg.cmiSenderUiNum !== selectedUser.uiNum && msg.cmiSenderUiNum !== uiNum) {
           for (const user of tmpList) {
             if (user.uiNum === msg.cmiSenderUiNum) {
@@ -63,8 +63,8 @@ function App() {
           }
         }
         dispatch(setUserList(tmpList));
-        if(msg.cmiSenderUiNum !== selectedUser.uiNum){
-          const chatList:any = JSON.parse(localStorage.getItem('chatList') || '{}');
+        if (msg.cmiSenderUiNum === selectedUser.uiNum || msg.cmiReceiveUiNum === selectedUser.uiNum) {
+          const chatList: any = JSON.parse(localStorage.getItem('chatList') || '{}');
           chatList.list.push(msg);
           dispatch(setChatList(chatList));
         }
