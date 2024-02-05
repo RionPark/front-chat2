@@ -19,4 +19,5 @@ export interface User{
 	token?:string;
 	login?:boolean;
 	authorities?:any[];
+	unreadCnt?:number;
 }

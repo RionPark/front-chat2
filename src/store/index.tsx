@@ -1,5 +1,6 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import userReducer from "./userSlice";
+import chatListReducer from "./chatListSlice";
 import userListReducer from "./userListSlice";
 import enterUserReducer from "./enterUserSlice";
 import selectedUserReducer from "./selectedUserSlice";
@@ -11,12 +12,14 @@ const reducers = combineReducers({
     user: userReducer,
     userList : userListReducer,
     enterUser : enterUserReducer,
-    selectedUser : selectedUserReducer
+    selectedUser : selectedUserReducer,
+    chatList : chatListReducer,
 });
 
 const persistConfig = {
     key: "root",
     storage,
+    whitelist:['user','userList']
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);

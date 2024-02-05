@@ -1,9 +1,10 @@
 import { Avatar, ChatContainer, ConversationHeader, InfoButton, Message, MessageInput, MessageList, MessageSeparator, TypingIndicator, VideoCallButton, VoiceCallButton } from "@chatscope/chat-ui-kit-react";
 import { useEffect, useRef, useState } from "react";
-import { useChatSelector } from "../store";
+import { useChatDispatch, useChatSelector } from "../store";
 import { Msg } from "../types/Msg.type";
 import { axiosAuth } from "../api/axiosHttp";
 import { publishMsg } from "../service/ChatService";
+import { setChatList } from "../store/chatListSlice";
 
 export const ChatList = () => {
     const [inputMsg, setInputMsg] = useState<string>('');
@@ -11,18 +12,29 @@ export const ChatList = () => {
     const loginUser = useChatSelector((state:any)=>state.user);
     const [msgs, setMsgs] = useState<Msg[]>([]);
     const page = useRef<number>(1);
+    
+    const chatList = useChatSelector((state:any)=>state.chatList);
+    const dispatch = useChatDispatch();
+
     const getMsgs = async(init:boolean)=>{
-      const res = await axiosAuth.get(`/message-log/${selectedUser.uiNum}/${loginUser.uiNum}/${page.current++}`);
-      const tmpMsgs = res.data.list;
-      tmpMsgs.sort((m1:any,m2:any)=>{
-        console.log(m1.cmiSentTime);
-        return m1.cmiSentTime.localeCompare(m2.cmiSentTime);
-      });
-      console.log(tmpMsgs);
-      if(init){
-        setMsgs(tmpMsgs);
-      }else{
-        setMsgs([...tmpMsgs,msgs]);
+      try{
+        const res = await axiosAuth.get(`/message-log/${selectedUser.uiNum}/${loginUser.uiNum}/${page.current++}`);
+        const tmpMsgs = res.data.list;
+        tmpMsgs.sort((m1:any,m2:any)=>{
+          console.log(m1.cmiSentTime);
+          return m1.cmiSentTime.localeCompare(m2.cmiSentTime);
+        });
+        if(init){
+          const chatInfo:any = {
+            uiNum : selectedUser.uiNum,
+            list : tmpMsgs
+          }
+          dispatch(setChatList(chatInfo));
+        }else{
+          setMsgs([...tmpMsgs,msgs]);
+        }
+      }catch(e){
+        
       }
     }
     const getFormat = (n:number)=>{
@@ -73,9 +85,9 @@ export const ChatList = () => {
             </ConversationHeader.Actions>
           </ConversationHeader>
           <MessageList>
-            {msgs.map((msg:Msg, idx:number) => (
+            {selectedUser.uiNum!==0 && chatList.list.map((msg:Msg, idx:number) => (
               <>
-               {printMessageSeparator(idx===0?null:msgs[idx-1].cmiSentTime,msg.cmiSentTime) }
+               {printMessageSeparator(idx===0?null:chatList.list[idx-1].cmiSentTime,msg.cmiSentTime) }
                <Message
                   key={idx}
                   model={{

@@ -6,19 +6,15 @@
     <title>Document</title>
 </head>
 <body>
-    <input type="text" id="d1" value="2023-02-02 07:00:01"><br>
-    <input type="text" id="d2"><br>
-    <button onclick="calcDate()">계산</button>
+    <textarea id="chatList" cols="30" rows="20"></textarea><br>
+    <button onclick="i=1;getMsgs(true)">처음메세지가져오기</button>
+    <button onclick="getMsgs()">메세지추가하기</button>
     <script>
-        const days = ['월','화','수','목','금','토','일'];
-        function calcDate(){
-            const d1 = new Date(document.querySelector('#d1').value);
-            const d2 = new Date(document.querySelector('#d2').value);
-            console.log(d1);
-            console.log(d2);
-            const month = d1.getMonth()<9?'0'+(d1.getMonth()+1):d1.getMonth()+1;
-            const str = `${d1.getFullYear()}-${month}-${d1.getDate()}(${days[d1.getDay()]})`;
-            console.log(str);
+        function getMsgs(init){
+            const arr = [1,2,3,4];
+            alert(arr[arr.length-1]);
+            alert(arr.slice(-1));
+            alert(arr.pop());
         }
     </script>
 </body>

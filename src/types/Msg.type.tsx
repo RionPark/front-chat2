@@ -1,4 +1,5 @@
 export interface Msg{
+	cmiNum?:number;
     cmiMessage?:string;
 	cmiSentTime?:string;
 	cmiReceivedTime?:string;
