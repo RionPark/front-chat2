@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { User } from '../types/User.type';
 import { useNavigate } from 'react-router-dom';
-import { axiosHttp } from '../api/axiosHttp';
+import { axiosAuth, axiosHttp } from '../api/axiosHttp';
 import { setUser } from '../store/userSlice';
 import { useChatDispatch } from '../store';
 import { persistor } from '..';
+import { setUserList } from '../store/userListSlice';
 
 export const Login = () => {
   const [error, setError] = useState<boolean>(false);
@@ -25,10 +26,12 @@ export const Login = () => {
   const login = async () => {
     setError(false);
     try {
-      const res = await axiosHttp.post('/api/login', chatUser);
+      let res = await axiosHttp.post('/api/login', chatUser);
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('uiNum', res.data.uiNum);
       dispatch(setUser(res.data));
+      res = await axiosAuth.get(`/chat-user-infos/${res.data.uiNum}`);
+      dispatch(setUserList(res.data));
       navigate('/main');
     } catch (err) {
       console.error(err);
