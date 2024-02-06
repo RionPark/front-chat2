@@ -15,42 +15,45 @@ import { persistor } from '.';
 import { Msg } from './types/Msg.type';
 import { globalRouter } from './api/globalRouter';
 import { setChatList } from './store/chatListSlice';
+import { User } from './types/User.type';
 
 
 function App() {
   const navigate = useNavigate();
+  const dispatch = useChatDispatch();
   globalRouter.navigate = navigate;
+  globalRouter.dispatch = dispatch;
+  globalRouter.useSelector = useChatSelector;
+
   const loginUser = useChatSelector((state: any) => state.user);
-  const uiNum = localStorage.getItem('uiNum');
   const tmpObj = useChatSelector((state: any) => state.userList);
   let selectedUser = useChatSelector((state: any) => state.selectedUser);
-  const dispatch = useChatDispatch();
   const configs = [
     {
       url: `/topic/enter-chat`,
       callback: (data: any) => {
-        const tmpUsers = JSON.parse(data.body);
-        const loginUsers = tmpObj.list.filter((user: any) => {
-          if (!user.login) {
-            for (const tmpUser of tmpUsers) {
-              if (tmpUser.login && tmpUser.uiNum === user.uiNum) {
-                console.log(tmpUser);
-                return user;
-              }
+        const connectedUsers = JSON.parse(data.body);
+        const users = JSON.parse(localStorage.getItem('userList') || '[]');
+        console.log(connectedUsers);
+        users.map((user: any) => {
+          for(const key in connectedUsers){
+            const connectedUser = connectedUsers[key];
+            if (user.uiNum === connectedUser.uiNum) {
+              user.login = connectedUser.login;
+              console.log(user);
             }
           }
         });
-
-        for (const loginUser of loginUsers) {
-          dispatch(setEnterUser(loginUser));
-        }
-        dispatch(setUserList(tmpUsers));
+        dispatch(setUserList(users));
       }
     },
     {
       url: `/topic/chat/${loginUser.uiNum}`,
       callback: (data: any) => {
         const msg: Msg = JSON.parse(data.body);
+        if (globalRouter.useSelector != null) {
+          globalRouter.useSelector((state: any) => state.userList);
+        }
         const tmpList: any = JSON.parse(localStorage.getItem('userList') || '[]');
         const selectedUser: any = JSON.parse(localStorage.getItem('selectedUser') || '{}');
         const uiNum = parseInt(localStorage.getItem('uiNum') || '0');
@@ -58,7 +61,6 @@ function App() {
           for (const user of tmpList) {
             if (user.uiNum === msg.cmiSenderUiNum) {
               user.unreadCnt = (isNaN(user.unreadCnt) ? 1 : ++user.unreadCnt);
-              console.log(user);
             }
           }
         }
@@ -72,18 +74,18 @@ function App() {
     }]
   useEffect(() => {
     disconnectClient();
-    if (!uiNum) {
+    if (loginUser.uiNum===0) {
       persistor.purge();
+      navigate('/');
       return;
     }
-    initClient(configs)
+    setTimeout(async ()=>{
+      await initClient(configs)
       .catch(e => {
-        console.log(e);
+          console.log(e);
       });
+    },200);
   }, [loginUser]);
-  useEffect(() => {
-    console.log(tmpObj.list);
-  }, [tmpObj.list])
   return (
     <>
       <Toast />

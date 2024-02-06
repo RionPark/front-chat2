@@ -3,25 +3,33 @@ import { useEffect, useState } from "react";
 import { useChatDispatch, useChatSelector } from "../store";
 import { setSelectedUser } from "../store/selectedUserSlice";
 import { axiosAuth } from "../api/axiosHttp";
+import { setUserList } from "../store/userListSlice";
 
 export const UserList = () => {
   const dispatch = useChatDispatch();
-  const tmpUsers = useChatSelector((state:any)=>state.userList);
+  const userListObj = useChatSelector((state:any)=>state.userList);
   const user = useChatSelector((state:any)=>state.user);
-  const [users, setUsers] = useState<any[]>([]);
   const selectUser = async (chatUser:any)=>{
-    await axiosAuth.put('/message-log',{cmiSenderUiNum:chatUser.uiNum, cmiReceiveUiNum:user.uiNum});
+    const res = await axiosAuth.put('/message-log',{
+      cmiSenderUiNum:chatUser.uiNum, 
+      cmiReceiveUiNum:user.uiNum
+    });
+    if(res.data){
+      const tmpUserList:any = JSON.parse(JSON.stringify(userListObj.list));
+      tmpUserList.map((user:any)=>{
+        if(user.uiNum === chatUser.uiNum){
+          user.unreadCnt = 0;
+        }
+      });
+      dispatch(setUserList(tmpUserList));
+    }
     dispatch(setSelectedUser(chatUser));
   }
-  useEffect(() => {
-    setUsers(tmpUsers.list);
-  }, [tmpUsers]);
-
   return (
     <Sidebar position="left" scrollable={false}>
       <Search placeholder="Search..." />
       <ConversationList>
-        {users?users.map((chatUser: any, idx) => (
+        {userListObj.list?userListObj.list.map((chatUser: any, idx:number) => (
           <Conversation
             key={idx}
             name={chatUser.uiName}

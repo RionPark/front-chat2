@@ -17,11 +17,11 @@ export const ChatList = () => {
     const dispatch = useChatDispatch();
 
     const getMsgs = async(init:boolean)=>{
+      if(!selectedUser.uiNum)return;
       try{
         const res = await axiosAuth.get(`/message-log/${selectedUser.uiNum}/${loginUser.uiNum}/${page.current++}`);
         const tmpMsgs = res.data.list;
         tmpMsgs.sort((m1:any,m2:any)=>{
-          console.log(m1.cmiSentTime);
           return m1.cmiSentTime.localeCompare(m2.cmiSentTime);
         });
         if(init){
@@ -55,7 +55,6 @@ export const ChatList = () => {
       }
     }
     const sendMsg = ()=>{
-      console.log(inputMsg);
       const destination = `/publish/react-chat/${selectedUser.uiNum}`;
       publishMsg(destination,{
         cmiMessage:inputMsg,
@@ -66,7 +65,6 @@ export const ChatList = () => {
     }
     useEffect(()=>{
       page.current = 1;
-      console.log(selectedUser);
       getMsgs(true);
     },[selectedUser]);
     return (
